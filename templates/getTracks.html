@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mélo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" integrity="sha384-nU14brUcp6StFntEOOEBvcJm4huWjB0OcIeQ3fltAfSmuZFrkAif0T+UtNGlKKQv" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: linear-gradient(to bottom, #000000  15%, #007000  100%);
+            overflow: hidden;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top:  0;
+            left:  0;
+            right:  0;
+            bottom:  0;
+            background-image: url('{{ track_details.albumImage }}');
+            background-size: cover;
+            background-position: center;
+            filter: blur(10px);
+            z-index: -3;
+        }
+        .dropdown-menu .dropdown-item {
+            border-bottom:  1px solid #fff;
+        }
+        #buttonsContainer {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap:  1rem;
+            width:  100%;
+            max-width:  600px;
+            margin:  0 auto;
+            height:  100vh;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap:  1rem;
+            width:  25%;
+        }
+        .buttons.left {
+            justify-content: flex-start;
+        }
+        .buttons.right {
+            justify-content: flex-end;
+        }
+        #trackCard {
+            background-color: #000000;
+            border:  2px solid #FFFFFF;
+            border-radius:  10px;
+            padding:  1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            width:  70%;
+            margin:  0 auto;
+            max-height:  650px;
+            position: relative;
+            box-shadow:  0  0  10px #FFFFFF,  0  0  20px #FFFFFF,  0  0  30px #FFFFFF,  0  0  40px #FFFFFF;
+        }
+        #coverImage {
+            width:  100%;
+            height: auto;
+            object-fit: cover;
+            border-radius:  10px  10px  0  0;
+        }
+        .actionButton {
+            background-color: transparent;
+            border: none;
+            font-size:  2rem;
+            color: #ffffff;
+            cursor: pointer;
+            transition: color  0.3s ease, transform  0.3s ease;
+            width:  90px;
+            height:  90px;
+            border-radius:  50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding:  0;
+        }
+        .actionButton:hover {
+            color: #ddd;
+        }
+        .actionButton:active {
+            transform: scale(0.9);
+        }
+        .dislike {
+            background-color: #dc1313;
+        }
+        .neutral {
+            background-color: #808080;
+        }
+        .like {
+            background-color: #34d034;
+        }
+        .superlike {
+            background-color: #ff97cb;
+        }
+        #trackCard .card-title,
+        #trackCard .card-text {
+            color: #ffffff;
+        }
+        #trackCard .card-body {
+            background-color: #000000;
+            padding:  1rem;
+            width:  100%;
+            text-align: center;
+        }
+        #replayButton {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding:   5px;
+            overflow: visible; /* Ensure the button is not cropped */
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            margin-bottom:  1rem;
+        }
+        .volume-icon {
+            margin-right:  5px;
+        }
+        #volumeBar {
+            width:  70%;
+        }
+        .time-display {
+            position: absolute;
+            top:  50%;
+            transform: translateY(-50%);
+            font-size:  12px;
+            color: #fff;
+        }
+        #currentTime {
+            left:  5px;
+        }
+        #totalDuration {
+            right:  5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Mélo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <ul class="navbar-nav" style="margin-left: auto;">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/getTracks">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="buttonsContainer">
+        <div class="buttons left">
+            <button class="btn btn-danger actionButton dislike" onclick="changeAction('dislike')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0   0   24   24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <button class="btn btn-light actionButton neutral" onclick="getNextTrack()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0   0   24   24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+        <div id="trackCard">
+            <img src="{{ track_details.albumImage }}" alt="Album cover" class="card-img" id="coverImage">
+            <br></br>
+            <div class="d-flex justify-content-center">
+                <button id="replayButton" class="btn btn-primary">
+                    <svg id="replayIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0  0  24  24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-repeat">
+                        <polyline points="17  1  21  5  17  9"></polyline>
+                        <path d="M3  11V9a4  4  0  0  1  4-4h4"></path>
+                        <polyline points="7  23  3  19  7  15"></polyline>
+                        <path d="M21  13v2a4  4  0  0  1-4  4H3"></path>
+                    </svg>
+                </button>               
+                <button id="playPauseButton" class="btn btn-primary">
+                    <svg id="playPauseIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0   0   24   24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play-circle">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="10   8   16   12   10   16   10   8"></polygon>
+                    </svg>
+                </button>
+            </div>
+            <div class="card-body text-center">
+                <h5 class="card-title" id="trackTitle">{{ track_details.trackName }}</h5>
+                <p class="card-text"><small class="text" id="trackAlbum">{{ track_details.albumName }}</small></p>
+                <p class="card-text"><small class="text" id="trackArtist">{{ track_details.artistName }}</small></p>
+            </div>
+        </div>
+        <div class="buttons right">
+            <button class="btn btn-primary actionButton like" onclick="changeAction('like')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0   0   24   24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check">
+                    <polyline points="20   6   9   17   4   12"></polyline>
+                </svg>
+            </button>
+            <button class="btn btn-warning actionButton superlike" onclick="changeAction('super')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0   0   24   24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
+                    <path d="M20.84   4.61a5.5   5.5   0   0   0-7.78   0L12   5.67l-1.06-1.06a5.5   5.5   0   0   0-7.78   7.78l1.06   1.06L12   21.23l7.78-7.78   1.06-1.06a5.5   5.5   0   0   0   0-7.78z"></path>
+                </svg>
+            </button>
+        </div>
+        <script>
+            var audioPlayer = document.getElementById('audioPlayer');
+            var isPlaying = false;
+            var progressBar = document.getElementById('progressBar');
+            var currentTimeDisplay = document.getElementById('currentTime');
+            var totalDurationDisplay = document.getElementById('totalDuration');
+            var trackUri = '{{ track_details.trackUri }}';
+            
+            function updatePlayPauseIcon() {
+                var icon = document.getElementById('playPauseIcon');
+                if (isPlaying) {
+                    icon.setAttribute('class', 'feather feather-pause-circle');
+                } else {
+                    icon.setAttribute('class', 'feather feather-play-circle');
+                }
+            }
+            
+            document.getElementById('playPauseButton').addEventListener('click', function() {
+                fetch('/play', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        trackUri: '{{ track_details.trackUri }}'
+                    })
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                }).then(data => {
+                    if (data.message) {
+                        console.log(data.message);
+                        if (data.message === 'Track started playing') {
+                            isPlaying = true;
+                            updatePlayPauseIcon();
+                            startProgressBarUpdate();
+                        } else if (data.message === 'Track paused') {
+                            isPlaying = false;
+                            updatePlayPauseIcon();
+                            stopProgressBarUpdate();
+                        }
+                    } else {
+                        console.error('Failed to play/pause track');
+                    }
+                }).catch(error => {
+                    console.error('There was a problem with the fetch operation: ', error);
+                });
+            });
+        
+            document.getElementById('replayButton').addEventListener('click', function() {
+                fetch('/replay', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        trackUri: '{{ track_details.trackUri }}'
+                    })
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                }).then(data => {
+                    if (data.message) {
+                        console.log(data.message);
+                        currentPlaybackProgress =   0;
+                        progressBar.value = currentPlaybackProgress;
+                        updateTimeDisplay();
+                        startProgressBarUpdate();
+                    } else {
+                        console.error('Failed to replay track');
+                    }
+                }).catch(error => {
+                    console.error('There was a problem with the fetch operation: ', error);
+                });
+            });
+            
+            // Function to handle the change action (like, dislike, etc.)
+            // Function to handle the change action (like, dislike, etc.)
+            function changeAction(action) {
+                var trackId = "{{ track_details.trackId }}";
+                var genreId = "{{ track_details.genreId }}";
+                var danceability = "{{ track_details.danceability }}";
+                var access_token = "{{ session['access_token'] }}"; // Retrieve the access_token from the session
+
+                fetch('/change_action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        trackId: trackId,
+                        action: action,
+                        genreId: genreId,
+                        danceability: danceability,
+                        access_token: access_token // Include the access_token in the request payload
+                    })
+                }).then(function(response) {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                }).then(function(data) {
+                    if (data.success) {
+                        console.log('Action processed successfully');
+                        // Call getNextTrack() to start looking for another track
+                        getNextTrack();
+                    } else {
+                        console.error('Failed to process action');
+                    }
+                }).catch(function(error) {
+                    console.error('There was a problem with the fetch operation: ', error);
+                });
+            }
+
+
+            
+            // Function to update track details
+            function updateTrackDetails(trackDetails) {
+                document.getElementById('trackTitle').textContent = trackDetails.trackName;
+                document.getElementById('trackAlbum').textContent = trackDetails.albumName;
+                document.getElementById('trackArtist').textContent = trackDetails.artistName;
+                document.getElementById('coverImage').src = trackDetails.albumImage;
+                currentTimeDisplay.textContent = formatTime(0);
+                totalDurationDisplay.textContent = formatTime(trackDetails.duration_ms /  1000);
+                progressBar.value =  0;
+                progressBar.max = trackDetails.duration_ms /  1000;
+                trackUri = trackDetails.trackUri;
+            }
+            
+            // Function to get the next track
+            function getNextTrack() {
+                window.location.href = '/getTracks';
+            }
+        </script>                   
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</body>
+</html>

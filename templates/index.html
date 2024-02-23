@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+ <head>
+ <!-- Required meta tags -->
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+
+ <!-- Bootstrap CSS -->
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" integrity="sha384-nU14brUcp6StFntEOOEBvcJm4huWjB0OcIeQ3fltAfSmuZFrkAif0T+UtNGlKKQv" crossorigin="anonymous">
+
+ <title>Mélo</title>
+ <style>
+    body {
+        background-image: linear-gradient(to bottom, #000000  12%, #007000  100%);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+    }
+    .dropdown-menu .dropdown-item {
+    border-bottom:   1px solid #fff;
+    }
+    .welcome-section {
+      height:   100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+    }
+    .welcome-section .card {
+    position: relative; /* Added for pseudo-element positioning */
+    background-color: #000000; /* Matte black background */
+    border:  4px solid #ffffff; /* White border */
+    border-radius:  25px; /* Rounded corners */
+    box-shadow:  0  4px  8px rgba(0,  0,  0,  0.2); /* Subtle shadow for matte effect */
+    color: #ffffff; /* Text color */
+    padding:  20px; /* Add some padding inside the card */
+    }
+
+    .welcome-section .card::before {
+        content: "";
+        position: absolute;
+        top:  0;
+        left:  0;
+        right:  0;
+        bottom:  0;
+        background-color: rgba(255,  255,  255,  0.1); /* Semi-transparent white */
+        border-radius:  25px; /* Match the card border-radius */
+        box-shadow:  0  0  10px  10px rgba(255,  255,  255,  0.3); /* Glow effect */
+        z-index: -1; /* Behind the content */
+    }
+
+    .welcome-section h1 {
+        font-size:  5em;
+        color: #ffffff; /* Ensure text color is white */
+    }
+
+    .welcome-section p {
+        font-size:  2em;
+        color: #ffffff; /* Ensure text color is white */
+    }
+
+    .welcome-section .btn {
+        margin-top:  2em;
+        background-color: #ffffff;
+        color: black;
+        border-radius:  25px;
+        border:  5px solid #ffffff;
+    }
+
+    .card {
+        border:   4px solid white;
+    }
+</style>
+<body>
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Mélo</a>
+    </div>
+ </nav>
+
+ <section class="welcome-section">
+    <div class="card bg-dark text-white mb-3" style="max-width:   200rem;">
+      <div class="card-body text-center">
+        <h1 class="card-title">Welcome to Mélo!</h1>
+        <h2 class="card-text">Songs catered to your need, a click away.</h2>
+        <a href="/login" class="btn btn-primary font-weight-bold" style="font-size:   20px;">Login through Spotify to get started!</a>
+      </div>
+    </div>
+ </section>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+</body>
+</html>
